@@ -3,7 +3,8 @@
  * Alfonso Martin, 2016
  * 
  * Basaddo en un rotary encoder, un arduino
- * Version 0.1   Prueba del encoder, salida serial al PC
+ * Version 0.1   Prueba del encoder, salida serial al PC 
+ * Version 0.2   Añadir pantalla LCD
  * 
  */
 //#include "NokiaLCD.h"

@@ -27,8 +27,10 @@ int pinALast;
 int aVal;
 int bVal;
 int aLast;
+int bLast;
 int encoderCount = 0;
 boolean bCW;
+boolean cambio;
  
 void setup()
 {
@@ -44,11 +46,13 @@ Serial.begin(9600);
   pinMode(b, INPUT);
 
   pinALast = digitalRead(pinA);
+  aLast = digitalRead(pinA);
  
   // Inicializamos las variables
   anterior = 1;
   contador = 0;
-  escribir();
+  Serial.println("Preparado");
+//  escribir();
 }
  
 void loop()
@@ -72,16 +76,32 @@ void loop()
   anterior = actual;
 
   */
-  // */ Codigo amb simple
-  /*
-  int actual = digitalRead(a);
-  if(actual == 0) {
+  // Codigo amb simple
+  
+  aVal = digitalRead(pinA);
+  bVal = digitalRead(pinB);
+  if(aVal == 0) {
     delay(10);
-    actual = digitalRead(a);
+    aVal = digitalRead(pinA);
+    bVal = digitalRead(pinB);
   }
- Serial.print(actual);
- Serial.print(" ");
- */
+  if ((aVal != aLast) || (bVal != bLast)){
+    Serial.print(aVal);
+    Serial.print(" ");
+    Serial.println(bVal);
+    Serial.println("-------");
+    if ((aVal==1)&&(bVal==1)){
+      encoderPosCount++;
+      if (encoderPosCount>24){
+        encoderPosCount = 0;
+      }
+    }
+    Serial.println(encoderPosCount);
+    Serial.println(".......");
+    aLast = aVal;
+    bLast = bVal;
+  }
+
 
 /* Version con rebotes
    aVal = digitalRead(pinA);
@@ -97,30 +117,45 @@ void loop()
      }
      */
 
-     // Otra version para evitar rebotes
+    
+/*
+     // Otra version para evitar rebotes en vias de mejorar
     aVal = digitalRead(pinA);
     bVal = digitalRead(pinB);
+    if (aVal == LOW){     //¿Evito rebotes?
+      delay(10);
+      aVal = digitalRead(pinA);
+      bVal = digitalRead(pinB);
+    }
+    cambio = false;
     if ((aVal != aLast)&&(aVal==LOW)) { // Knob Rotated l when aVal changes, BUT use only if aVal is LOW.
       if(bVal == LOW){ 
+        bCW = true;
+        cambio = true;
         encoderCount++;
         }else {
+          cambio = true;
+          bCW = false;
           encoderCount--;
           }
     }
     aLast = aVal; // Don’t forget this
 
-     Serial.print ("Rotated: ");
+     if (cambio){
+     Serial.print ("Rota: ");
      if (bCW){
-       Serial.println ("clockwise");
+       Serial.println ("anti horario");
      }else{
-       Serial.println("counterclockwise");
+       Serial.println("horario");
      }
-     Serial.print("Encoder Position: ");
-     Serial.println(encoderPosCount);
+     Serial.print("Posicion: ");
+     Serial.println(encoderCount);
+     }
      
-
+*/
 }
 
+ /*
 //Escribir en la salida serie del PC
 void escribir()
 {
@@ -130,7 +165,7 @@ void escribir()
   Serial.println(texto);
 }
 
- /*
+
 // Esta función escribe en el LCD el valor de
 // la variable "contador"
 void escribir()
